@@ -1,20 +1,23 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# Germany Study Eligibility Checker
 
-# Run and deploy your AI Studio app
+## 🔴 IMPORTANT: How to Fix "Login to Vercel" Issue
 
-This contains everything you need to run your app locally.
+If users are asked to log in to Vercel when visiting your public link, it means **Deployment Protection** is active.
 
-View your app in AI Studio: https://ai.studio/apps/drive/1c3y8Y6_GuN2mhoSth0XYHlgY_YY_wTJn
+**To remove the login requirement:**
 
-## Run Locally
+1. Go to your [Vercel Dashboard](https://vercel.com/dashboard).
+2. Select this project (**german-eligibility-checker...**).
+3. Click on the **Settings** tab.
+4. On the left sidebar, click **Deployment Protection**.
+5. Find the **Vercel Authentication** section.
+6. **Disable** / Toggle off "Vercel Authentication".
+7. Click **Save**.
 
-**Prerequisites:**  Node.js
+Your app will now be publicly accessible without a login.
 
+## Environment Variables
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+Ensure you have added the following Environment Variable in Vercel (**Settings** > **Environment Variables**):
+
+- `VITE_API_KEY`: Your Gemini API Key.
