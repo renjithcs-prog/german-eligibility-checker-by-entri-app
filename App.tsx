@@ -102,7 +102,6 @@ const App: React.FC = () => {
 
     try {
       // Save to Google Sheet
-      // We await this to ensure the browser actually sends the request before proceeding to heavy logic
       await saveLeadToSheet(name, phone, language, answers);
 
       // Pass the captured name to the analysis service
@@ -136,11 +135,12 @@ const App: React.FC = () => {
                 alt="Germany Architecture" 
                 className="w-full h-full object-cover"
             />
-            <div className="absolute inset-0 bg-gradient-to-b from-white/90 via-white/80 to-indigo-50/90 backdrop-blur-[2px]"></div>
+            {/* Reduced Opacity to show image */}
+            <div className="absolute inset-0 bg-gradient-to-b from-white/80 via-white/50 to-indigo-100/40 backdrop-blur-[1px]"></div>
         </div>
 
         <div className="relative z-10 text-center max-w-3xl">
-          <div className="inline-flex items-center justify-center p-2 bg-white/90 backdrop-blur rounded-2xl shadow-lg mb-8 animate-bounce ring-1 ring-slate-200">
+          <div className="inline-flex items-center justify-center p-2 bg-white/80 backdrop-blur rounded-2xl shadow-lg mb-8 animate-bounce ring-1 ring-slate-200">
              <div className="flex items-center space-x-2 px-3 py-1">
                <span className="relative flex h-3 w-3">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
@@ -155,7 +155,7 @@ const App: React.FC = () => {
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-500 via-red-600 to-black">Accepted?</span>
           </h1>
           
-          <p className="text-xl md:text-2xl text-slate-700 mb-10 leading-relaxed max-w-2xl mx-auto font-medium">
+          <p className="text-xl md:text-2xl text-slate-800 mb-10 leading-relaxed max-w-2xl mx-auto font-medium drop-shadow-sm bg-white/40 backdrop-blur-sm p-4 rounded-xl border border-white/20">
             <span className="font-bold text-slate-900">Avoid the 40% rejection trap.</span> Don't let simple errors ruin your dream. Instantly check your admission and visa eligibility for the 2026 intake.
           </p>
 
@@ -170,7 +170,7 @@ const App: React.FC = () => {
               </span>
             </button>
             
-            <p className="text-sm font-medium text-slate-500 italic">
+            <p className="text-sm font-medium text-slate-600 italic">
                Takes less than 1 minute
             </p>
           </div>
@@ -189,7 +189,7 @@ const App: React.FC = () => {
                 alt="Library" 
                 className="w-full h-full object-cover"
             />
-            <div className="absolute inset-0 bg-white/80 backdrop-blur-md"></div>
+            <div className="absolute inset-0 bg-white/60 backdrop-blur-md"></div>
         </div>
         <div className="relative z-10 bg-white/90 backdrop-blur-sm p-10 rounded-3xl shadow-2xl text-center max-w-md w-full border border-slate-100">
           <Loader2 className="w-16 h-16 text-indigo-600 animate-spin mx-auto mb-6" />
@@ -210,11 +210,12 @@ const App: React.FC = () => {
                 alt="University Hall" 
                 className="w-full h-full object-cover"
             />
-            <div className="absolute inset-0 bg-slate-50/95 backdrop-blur-sm"></div>
+            {/* Reduced Opacity */}
+            <div className="absolute inset-0 bg-slate-50/50 backdrop-blur-sm"></div>
         </div>
 
          <div className="relative z-10 max-w-5xl mx-auto mb-6">
-             <button onClick={handleReset} className="text-sm font-medium text-slate-600 hover:text-slate-900 flex items-center bg-white/50 px-3 py-1 rounded-full backdrop-blur-sm transition-colors">
+             <button onClick={handleReset} className="text-sm font-medium text-slate-700 hover:text-slate-900 flex items-center bg-white/80 px-3 py-1 rounded-full backdrop-blur-md transition-colors shadow-sm">
                  &larr; Back to Home
              </button>
          </div>
@@ -229,7 +230,7 @@ const App: React.FC = () => {
   if (error) {
     return (
        <div className="min-h-screen relative flex flex-col items-center justify-center p-6">
-        <div className="absolute inset-0 z-0 bg-slate-50"></div>
+        <div className="absolute inset-0 z-0 bg-slate-100"></div>
         <div className="relative z-10 bg-white p-10 rounded-3xl shadow-xl text-center max-w-md w-full border border-red-100">
           <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
              <span className="text-2xl text-red-600 font-bold">!</span>
@@ -252,7 +253,7 @@ const App: React.FC = () => {
                     alt="Study Background" 
                     className="w-full h-full object-cover"
                 />
-                <div className="absolute inset-0 bg-slate-50/95"></div>
+                <div className="absolute inset-0 bg-slate-50/50 backdrop-blur-sm"></div>
             </div>
             <div className="relative z-10 w-full">
                  <SignupForm onSubmit={handleSignupSubmit} />
@@ -270,12 +271,15 @@ const App: React.FC = () => {
                 alt="Study Background" 
                 className="w-full h-full object-cover"
             />
-            <div className="absolute inset-0 bg-slate-50/95"></div>
+            {/* Reduced Opacity */}
+            <div className="absolute inset-0 bg-slate-50/50 backdrop-blur-sm"></div>
         </div>
 
       <div className="w-full max-w-2xl relative z-10">
         <div className="mb-10 text-center">
-            <h2 className="text-xl font-semibold text-slate-900">Step {currentStep + 1} of 5</h2>
+            <span className="inline-block px-4 py-1 rounded-full bg-white/60 backdrop-blur-sm text-xl font-semibold text-slate-800 shadow-sm">
+                Step {currentStep + 1} of 5
+            </span>
         </div>
         
         <ProgressBar currentStep={currentStep + 1} totalSteps={QUESTIONS.length} />
