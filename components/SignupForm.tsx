@@ -8,7 +8,7 @@ interface SignupFormProps {
 const SignupForm: React.FC<SignupFormProps> = ({ onSubmit }) => {
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
-  const [language, setLanguage] = useState('English');
+  const [language, setLanguage] = useState('Hindi');
   const [errors, setErrors] = useState<{name?: string, phone?: string}>({});
 
   const validatePhone = (input: string): string | undefined => {
@@ -141,7 +141,6 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSubmit }) => {
                 onChange={(e) => setLanguage(e.target.value)}
                 className="w-full pl-12 pr-4 py-3 rounded-xl border border-slate-200 focus:ring-indigo-100 focus:border-indigo-500 outline-none transition-all bg-white appearance-none cursor-pointer"
              >
-                <option value="English">English</option>
                 <option value="Hindi">Hindi</option>
                 <option value="Malayalam">Malayalam</option>
                 <option value="Tamil">Tamil</option>
