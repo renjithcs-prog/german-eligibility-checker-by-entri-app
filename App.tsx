@@ -68,6 +68,7 @@ const QUESTIONS: Question[] = [
 // Recreating the "E german" logo as an SVG
 const EntriLogo = () => (
   <svg width="140" height="70" viewBox="0 0 140 70" fill="none" xmlns="http://www.w3.org/2000/svg" className="h-20 w-auto">
+    <title>Entri German</title>
     {/* Blue Rounded Square Background */}
     <rect x="50" y="0" width="40" height="40" rx="8" fill="#2563EB" />
     
