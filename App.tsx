@@ -6,7 +6,7 @@ import ProgressBar from './components/ProgressBar';
 import SignupForm from './components/SignupForm';
 import { analyzeEligibility } from './services/gemini';
 import { saveLeadToSheet } from './services/sheet';
-import { GraduationCap, School, Euro, Languages, Award, Loader2, ArrowRight, BookOpen } from 'lucide-react';
+import { GraduationCap, School, Euro, Languages, Award, Loader2, ArrowRight, BookOpen, Play } from 'lucide-react';
 
 // Define the 5 static questions
 const QUESTIONS: Question[] = [
@@ -129,17 +129,23 @@ const App: React.FC = () => {
   if (!started) {
     return (
       <div className="min-h-screen relative flex flex-col items-center justify-center p-6 overflow-hidden font-sans">
-        <div className="absolute inset-0 z-0">
-            <img 
-                src="https://images.unsplash.com/photo-1467269204594-9661b133dd2b?auto=format&fit=crop&q=80" 
-                alt="Germany Architecture" 
-                className="w-full h-full object-cover"
-            />
-            {/* Reduced Opacity to show image */}
-            <div className="absolute inset-0 bg-gradient-to-b from-white/80 via-white/50 to-indigo-100/40 backdrop-blur-[1px]"></div>
+        <div className="absolute inset-0 z-0 bg-gradient-to-br from-indigo-50 via-white to-slate-100">
+            {/* Background Image Removed to fix broken image icon issue */}
+            <div className="absolute inset-0 bg-grid-slate-900/[0.04] bg-[bottom_1px_center] dark:bg-grid-slate-400/[0.05] [mask-image:linear-gradient(0deg,transparent,black)]"></div>
         </div>
 
         <div className="relative z-10 text-center max-w-3xl">
+          {/* Logo Section */}
+          <div className="flex flex-col items-center mb-10">
+              <span className="text-slate-500 text-sm font-semibold uppercase tracking-widest mb-2">Powered by</span>
+              <div className="flex items-center justify-center gap-3">
+                  <div className="w-12 h-12 bg-blue-500 rounded-xl flex items-center justify-center shadow-md">
+                     <span className="text-white font-bold text-3xl pb-1">E</span>
+                  </div>
+                  <span className="text-blue-500 font-bold text-4xl tracking-tight">german</span>
+              </div>
+          </div>
+
           <div className="inline-flex items-center justify-center p-2 bg-white/80 backdrop-blur rounded-2xl shadow-lg mb-8 animate-bounce ring-1 ring-slate-200">
              <div className="flex items-center space-x-2 px-3 py-1">
                <span className="relative flex h-3 w-3">
