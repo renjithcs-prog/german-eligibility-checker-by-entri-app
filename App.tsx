@@ -6,7 +6,7 @@ import ProgressBar from './components/ProgressBar';
 import SignupForm from './components/SignupForm';
 import { analyzeEligibility } from './services/gemini';
 import { saveLeadToSheet } from './services/sheet';
-import { GraduationCap, School, Euro, Languages, Award, Loader2, ArrowRight, BookOpen, Play } from 'lucide-react';
+import { GraduationCap, School, Euro, Languages, Award, Loader2, ArrowRight, BookOpen } from 'lucide-react';
 
 // Define the 5 static questions
 const QUESTIONS: Question[] = [
@@ -64,6 +64,23 @@ const QUESTIONS: Question[] = [
     ]
   }
 ];
+
+// Recreating the "E german" logo as an SVG
+const EntriLogo = () => (
+  <svg width="140" height="70" viewBox="0 0 140 70" fill="none" xmlns="http://www.w3.org/2000/svg" className="h-20 w-auto">
+    {/* Blue Rounded Square Background */}
+    <rect x="50" y="0" width="40" height="40" rx="8" fill="#2563EB" />
+    
+    {/* Letter E */}
+    <path d="M60 10H74V14H64V18H72V22H64V26H74V30H60V10Z" fill="white" />
+    
+    {/* Play Triangle */}
+    <path d="M78 15L86 20L78 25V15Z" fill="white" />
+    
+    {/* Text 'german' */}
+    <text x="70" y="60" fontFamily="'Inter', sans-serif" fontWeight="700" fontSize="18" fill="#2563EB" textAnchor="middle" letterSpacing="-0.5">german</text>
+  </svg>
+);
 
 const App: React.FC = () => {
   const [started, setStarted] = useState(false);
@@ -137,13 +154,8 @@ const App: React.FC = () => {
         <div className="relative z-10 text-center max-w-3xl">
           {/* Logo Section */}
           <div className="flex flex-col items-center mb-10">
-              <span className="text-slate-500 text-sm font-semibold uppercase tracking-widest mb-2">Powered by</span>
-              <div className="flex items-center justify-center gap-3">
-                  <div className="w-12 h-12 bg-blue-500 rounded-xl flex items-center justify-center shadow-md">
-                     <span className="text-white font-bold text-3xl pb-1">E</span>
-                  </div>
-                  <span className="text-blue-500 font-bold text-4xl tracking-tight">german</span>
-              </div>
+              <span className="text-slate-400 text-xs font-bold uppercase tracking-widest mb-3">Powered by</span>
+              <EntriLogo />
           </div>
 
           <div className="inline-flex items-center justify-center p-2 bg-white/80 backdrop-blur rounded-2xl shadow-lg mb-8 animate-bounce ring-1 ring-slate-200">

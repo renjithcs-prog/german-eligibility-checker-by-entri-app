@@ -133,7 +133,7 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSubmit }) => {
         </div>
 
         <div>
-          <label className="block text-sm font-semibold text-slate-700 mb-2">Preferred Language</label>
+          <label className="block text-sm font-semibold text-slate-700 mb-2">Your Language</label>
           <div className="relative">
              <Languages className="absolute left-4 top-3.5 w-5 h-5 text-slate-400" />
              <select 
