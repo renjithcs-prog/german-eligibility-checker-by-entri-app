@@ -15,11 +15,6 @@ const getSheetUrl = (): string | undefined => {
     return import.meta.env.VITE_GOOGLE_SHEETS_WEBHOOK_URL;
   }
 
-  // Fallback to process.env (older build systems)
-  if (typeof process !== 'undefined' && process.env && process.env.GOOGLE_SHEETS_WEBHOOK_URL) {
-    return process.env.GOOGLE_SHEETS_WEBHOOK_URL;
-  }
-
   // Fallback to hardcoded URL
   return DEFAULT_WEBHOOK_URL;
 };

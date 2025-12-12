@@ -32,21 +32,13 @@ const assessmentSchema: Schema = {
   required: ['eligibility', 'ability']
 };
 
-// Helper function to safely retrieve the API key from various environment locations
+// Helper function to safely retrieve the API key from Vite environment
 const getApiKey = (): string | undefined => {
-  // Check for Vite standard env var (most likely for Vercel/Vite apps)
+  // Check for Vite standard env var
   // @ts-ignore
   if (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_API_KEY) {
     // @ts-ignore
     return import.meta.env.VITE_API_KEY;
-  }
-
-  // Check process.env for standard Node/React setups
-  if (typeof process !== 'undefined' && process.env) {
-    if (process.env.API_KEY) return process.env.API_KEY;
-    if (process.env.VITE_API_KEY) return process.env.VITE_API_KEY;
-    if (process.env.REACT_APP_API_KEY) return process.env.REACT_APP_API_KEY;
-    if (process.env.NEXT_PUBLIC_API_KEY) return process.env.NEXT_PUBLIC_API_KEY;
   }
 
   return undefined;
