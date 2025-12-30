@@ -1,19 +1,17 @@
 import { UserAnswer } from '../types';
 
+// Declare process for TypeScript to avoid build errors
+declare var process: {
+  env: {
+    [key: string]: string | undefined;
+  };
+};
+
 // ============================================================================
 // CONFIGURATION: GOOGLE SHEETS WEBHOOK
 // ============================================================================
 const DEFAULT_WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbz6G5cEA1UQEG2Gir7W52BcTDcj4qx3u7ifLlxD6gdWVPuEpohrSFyha90usKMKkP5S9A/exec';
 // ============================================================================
-
-const getSheetUrl = (): string | undefined => {
-  // @ts-ignore
-  if (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_GOOGLE_SHEETS_WEBHOOK_URL) {
-    // @ts-ignore
-    return import.meta.env.VITE_GOOGLE_SHEETS_WEBHOOK_URL;
-  }
-  return DEFAULT_WEBHOOK_URL;
-};
 
 export interface UtmParams {
   utm_source?: string;
@@ -30,7 +28,11 @@ export const saveLeadToSheet = async (
   answers: UserAnswer[],
   utmParams: UtmParams = {}
 ) => {
-  const targetUrl = getSheetUrl();
+  // Priority: VITE_ environment var, then process.env, then default
+  // @ts-ignore
+  const targetUrl = (typeof import.meta !== 'undefined' && import.meta.env?.VITE_GOOGLE_SHEETS_WEBHOOK_URL) || 
+                    process.env.GOOGLE_SHEETS_WEBHOOK_URL || 
+                    DEFAULT_WEBHOOK_URL;
 
   if (!targetUrl) {
     console.warn("Skipping Sheet save: No Webhook URL configured.");
@@ -53,6 +55,7 @@ export const saveLeadToSheet = async (
       answers: answers.map(a => `${a.questionText}: ${a.selectedOption.label}`).join(' | ')
     };
 
+    // Use fetch with text/plain to avoid CORS preflight issues with Google Apps Script
     await fetch(targetUrl, {
       method: 'POST',
       mode: 'no-cors', 

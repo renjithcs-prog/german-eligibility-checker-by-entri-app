@@ -12,51 +12,74 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSubmit }) => {
   const [errors, setErrors] = useState<{name?: string, phone?: string}>({});
 
   const validatePhone = (input: string): string | undefined => {
-    // 1. Allow Only Digits + Optional Special Characters
-    if (!/^[0-9+\s\-()]*$/.test(input)) {
-       return 'Phone number contains invalid characters. Only digits, spaces, +, -, and () are allowed.';
-    }
+    const trimmed = input.trim();
+    const cleanNumber = trimmed.replace(/[^0-9]/g, '');
 
-    // 2. Normalize
-    const cleanNumber = input.replace(/[^0-9]/g, '');
+    // 1. Basic Character & Presence Check
+    if (!trimmed) return 'Phone number is required.';
+    if (!/^[0-9+\s\-()]*$/.test(trimmed)) return 'Invalid characters in phone number.';
+    if (cleanNumber.length < 7) return 'Phone number is too short.';
+    if (cleanNumber.length > 15) return 'Phone number is too long.';
 
-    if (!cleanNumber) {
-      return 'Phone number is required.';
-    }
+    // 2. Prevent Repeating Digits (e.g., 99999999)
+    if (/^(\d)\1{5,}$/.test(cleanNumber)) return 'Invalid phone number pattern.';
 
-    // 3. Global E.164 Length Check (7-15 digits)
-    if (cleanNumber.length < 7 || cleanNumber.length > 15) {
-       return 'Phone number must be between 7 and 15 digits.';
-    }
-
-    // 4. Anti-Spam / Fake Number Detection
-    if (/^(\d)\1+$/.test(cleanNumber)) {
-       return 'Invalid phone number (repeating digits).';
-    }
-
-    const sequences = ["0123456789", "1234567890", "9876543210"];
-    if (sequences.some(seq => cleanNumber.includes(seq))) {
-       return 'Invalid phone number (sequential pattern).';
-    }
-
-    // 5. Smart Indian Validation
-    // Detects Indian intent (starts with +91, 91 (12 digits), or 6-9 (10 digits))
-    const isIndianIntent = 
-      input.trim().startsWith('+91') || 
-      (cleanNumber.startsWith('91') && cleanNumber.length === 12) || 
-      (cleanNumber.length === 10 && /^[6-9]/.test(cleanNumber));
-
-    if (isIndianIntent) {
-      let core = cleanNumber;
-      
-      // If it starts with 91 and is 12 digits, remove 91 country code
-      if (core.length === 12 && core.startsWith('91')) {
-        core = core.substring(2);
+    // 3. Prevent Sequential Patterns (e.g., 12345678, 98765432)
+    const isSequential = (str: string) => {
+      if (str.length < 6) return false;
+      let asc = true;
+      let desc = true;
+      for (let i = 0; i < str.length - 1; i++) {
+        const current = parseInt(str[i]);
+        const next = parseInt(str[i+1]);
+        if (next !== (current + 1) % 10) asc = false;
+        if (next !== (current - 1 + 10) % 10) desc = false;
       }
+      return asc || desc;
+    };
+
+    for (let i = 0; i <= cleanNumber.length - 6; i++) {
+      if (isSequential(cleanNumber.substring(i, i + 6))) {
+        return 'Please enter a valid phone number.';
+      }
+    }
+
+    // 4. Country Specific & Leading Zero Validation
+    if (trimmed.startsWith('+')) {
+      // Logic for + prefix
+      if (trimmed.startsWith('+91')) {
+        // India: Must be exactly 10 digits after +91
+        const after91 = trimmed.substring(3).replace(/[^0-9]/g, '');
+        if (after91.length !== 10) return 'Indian numbers must have exactly 10 digits after +91.';
+        if (after91.startsWith('0')) return 'Indian numbers cannot start with 0.';
+        if (!/^[6-9]/.test(after91)) return 'Invalid Indian mobile number prefix.';
+      } else {
+        // Other Countries
+        const parts = trimmed.split(/[\s\-()]+/);
+        if (parts.length > 1) {
+          // If they used separators: +CC 0123...
+          const subscriber = parts.slice(1).join('').replace(/[^0-9]/g, '');
+          if (subscriber.startsWith('0')) return 'Number cannot start with 0 after country code.';
+          if (subscriber.length < 6) return 'Subscriber number is too short.';
+        } else {
+          // No separators: +490123...
+          // Heuristic: check digit after common CC lengths (1, 2, 3)
+          const ccLen = cleanNumber.startsWith('1') ? 1 : (cleanNumber.length > 10 ? 2 : 3);
+          if (cleanNumber[ccLen] === '0') return 'Number cannot start with 0 after country code.';
+        }
+      }
+    } else {
+      // No '+' prefix provided
+      if (cleanNumber.startsWith('0')) return 'Phone number cannot start with 0.';
       
-      // Strict Indian Validation Rule: ^[6-9]\d{9}$
-      if (!/^[6-9]\d{9}$/.test(core)) {
-         return 'Invalid Indian number. Must be 10 digits starting with 6, 7, 8, or 9.';
+      // If 10 digits, assume India intent and validate
+      if (cleanNumber.length === 10) {
+        if (!/^[6-9]/.test(cleanNumber)) return 'Invalid 10-digit number prefix.';
+      } else if (cleanNumber.startsWith('91') && cleanNumber.length === 12) {
+        // India with CC but no +
+        const subscriber = cleanNumber.substring(2);
+        if (subscriber.startsWith('0')) return 'Indian numbers cannot start with 0.';
+        if (!/^[6-9]/.test(subscriber)) return 'Invalid Indian mobile number.';
       }
     }
 
@@ -71,13 +94,9 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSubmit }) => {
       newErrors.name = 'Full name is required';
     }
 
-    if (!phone.trim()) {
-      newErrors.phone = 'Phone number is required';
-    } else {
-      const phoneError = validatePhone(phone);
-      if (phoneError) {
-        newErrors.phone = phoneError;
-      }
+    const phoneError = validatePhone(phone);
+    if (phoneError) {
+      newErrors.phone = phoneError;
     }
 
     if (Object.keys(newErrors).length > 0) {
@@ -106,7 +125,10 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSubmit }) => {
              <input 
                 type="text" 
                 value={name}
-                onChange={(e) => setName(e.target.value)}
+                onChange={(e) => {
+                  setName(e.target.value);
+                  if (errors.name) setErrors(prev => ({ ...prev, name: undefined }));
+                }}
                 className={`w-full pl-12 pr-4 py-3 rounded-xl border ${errors.name ? 'border-red-500 focus:ring-red-200' : 'border-slate-200 focus:ring-indigo-100 focus:border-indigo-500'} outline-none transition-all`}
                 placeholder="e.g. Alex Schmidt"
              />
@@ -121,15 +143,15 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSubmit }) => {
              <input 
                 type="tel" 
                 value={phone}
-                onChange={(e) => setPhone(e.target.value)}
+                onChange={(e) => {
+                  setPhone(e.target.value);
+                  if (errors.phone) setErrors(prev => ({ ...prev, phone: undefined }));
+                }}
                 className={`w-full pl-12 pr-4 py-3 rounded-xl border ${errors.phone ? 'border-red-500 focus:ring-red-200' : 'border-slate-200 focus:ring-indigo-100 focus:border-indigo-500'} outline-none transition-all`}
                 placeholder="e.g. +91 98765 43210"
              />
           </div>
           {errors.phone && <p className="text-red-500 text-xs mt-1 font-medium">{errors.phone}</p>}
-          <p className="text-slate-400 text-[10px] mt-1 ml-1">
-            Format: Country Code + Number (e.g., +91.., +49.., +971..)
-          </p>
         </div>
 
         <div>

@@ -1,7 +1,15 @@
 import { GoogleGenAI, Type, Schema } from "@google/genai";
 import { UserAnswer, AssessmentResult } from '../types';
 
-const MODEL_NAME = 'gemini-2.5-flash';
+// Declare process for TypeScript to avoid build errors in Vite/Browser environment
+declare var process: {
+  env: {
+    API_KEY: string;
+    [key: string]: string | undefined;
+  };
+};
+
+const MODEL_NAME = 'gemini-3-flash-preview';
 
 // Define the schema for strict JSON output
 const assessmentSchema: Schema = {
@@ -32,24 +40,12 @@ const assessmentSchema: Schema = {
   required: ['eligibility', 'ability']
 };
 
-// Helper function to safely retrieve the API key from Vite environment
-const getApiKey = (): string | undefined => {
-  // Check for Vite standard env var
-  // @ts-ignore
-  if (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_API_KEY) {
-    // @ts-ignore
-    return import.meta.env.VITE_API_KEY;
-  }
-
-  return undefined;
-};
-
 export const analyzeEligibility = async (answers: UserAnswer[], userName: string): Promise<AssessmentResult> => {
-  const apiKey = getApiKey();
+  // Directly use process.env.API_KEY as per guidelines
+  const apiKey = process.env.API_KEY;
   
   if (!apiKey) {
-    console.error("API Key is missing. Please check your Vercel Environment Variables. Expected: VITE_API_KEY");
-    throw new Error("API Key is missing");
+    throw new Error("API Key is missing in environment variables.");
   }
 
   const ai = new GoogleGenAI({ apiKey });
